@@ -1,0 +1,77 @@
+{
+  "name": "@pokemons/api",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^18.13",
+    "npm": ">=8"
+  },
+  "scripts": {
+    "build": "rm -Rf dist && npm run graphql:generate && tsc -p tsconfig.build.json",
+    "database:migrate": "npx knex migrate:latest --knexfile src/database/knexfile.js",
+    "database:import": "tsx src/cli/importer/importer.ts",
+    "graphql:generate": "rm -Rf src/graphql/generated && tsx src/cli/graphqlGenerator.ts",
+    "dev": "tsx watch ./src/index.ts",
+    "start:dev": "LOG_LEVEL=\"error\" tsx ./src/index.ts",
+    "test": "CI=true vitest src/test/integration",
+    "test:coverage": "CI=true vitest run --coverage",
+    "test:e2e": "echo 'OK'",
+    "lint": "prettier --write \"**/*.{js,ts,tsx,md}\" && eslint --fix \"**/*.{js,ts,tsx}\""
+  },
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./graphql": {
+      "default": "./dist/graphql.js",
+      "types": "./dist/graphql.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "index": [
+        "./dist/index.d.ts"
+      ],
+      "graphql": [
+        "./dist/graphql.d.ts"
+      ]
+    }
+  },
+  "_moduleAliases": {
+    "@app": "src/"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^8.3.0",
+    "@fastify/cors": "^8.2.0",
+    "@fastify/env": "^4.2.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "fastify": "^4.13.0",
+    "graphql-yoga": "^3.6.0",
+    "knex": "^2.4.2",
+    "knex-cleaner": "^1.3.1",
+    "mysql2": "^3.1.2",
+    "nexus": "^1.3.0",
+    "objection": "^3.0.1",
+    "rambda": "^7.4.0",
+    "reflect-metadata": "^0.1.13",
+    "tsconfig-paths": "^4.1.2",
+    "typedi": "^0.10.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@graphql-tools/executor-http": "^0.1.9",
+    "@types/knex-cleaner": "^1.3.3",
+    "@types/node": "^18.14.1",
+    "@types/uuid": "^9.0.0",
+    "@vitest/coverage-c8": "^0.28.5",
+    "eslint": "7.32.0",
+    "eslint-config-custom": "*",
+    "tsconfig": "*",
+    "tsx": "^3.12.3",
+    "typescript": "^4.9.5"
+  }
+}

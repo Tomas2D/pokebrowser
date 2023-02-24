@@ -1,0 +1,27 @@
+{
+  "name": "@pokemons/core",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.13",
+    "npm": ">=8"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build --filter=api && start-server-and-test 'turbo run dev --filter=api' 4000 'turbo run build --filter=web'",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:e2e": "start-server-and-test 'turbo run dev --filter=api' 4000 'turbo run test:e2e --filter=web'",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "eslint-config-custom": "*",
+    "prettier": "latest",
+    "turbo": "^1.8.2"
+  },
+  "packageManager": "npm@8.15.0"
+}

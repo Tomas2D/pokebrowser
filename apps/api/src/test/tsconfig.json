@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["fastify-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ES2021",
+    "lib": ["ES2021"],
+    "module": "ESNext",
+    "esModuleInterop": true
+  }
+}

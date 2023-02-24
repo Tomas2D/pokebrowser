@@ -1,0 +1,11 @@
+{
+  "extends": "tsconfig/nextjs.json",
+  "include": ["next-env.d.ts", "styled.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "cypress"],
+  "compilerOptions": {
+    "paths": {
+      "@app/*": ["./src/*"],
+      "@module/*": ["./src/modules/*"]
+    }
+  }
+}

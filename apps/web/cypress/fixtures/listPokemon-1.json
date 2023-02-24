@@ -1,0 +1,116 @@
+{
+  "data": {
+    "listPokemon": {
+      "meta": {
+        "total": 151,
+        "hasMore": true,
+        "__typename": "ListPokemonMeta"
+      },
+      "edges": [
+        {
+          "id": 1,
+          "name": "Bulbasaur",
+          "slug": "bulbasaur",
+          "types": [
+            { "id": 73, "name": "Grass", "__typename": "PokemonType" },
+            { "id": 74, "name": "Poison", "__typename": "PokemonType" }
+          ],
+          "maxHp": 1071,
+          "maxCp": 951,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 2,
+          "name": "Ivysaur",
+          "slug": "ivysaur",
+          "types": [
+            { "id": 73, "name": "Grass", "__typename": "PokemonType" },
+            { "id": 74, "name": "Poison", "__typename": "PokemonType" }
+          ],
+          "maxHp": 1632,
+          "maxCp": 1483,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 3,
+          "name": "Venusaur",
+          "slug": "venusaur",
+          "types": [
+            { "id": 73, "name": "Grass", "__typename": "PokemonType" },
+            { "id": 74, "name": "Poison", "__typename": "PokemonType" }
+          ],
+          "maxHp": 2580,
+          "maxCp": 2392,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 4,
+          "name": "Charmander",
+          "slug": "charmander",
+          "types": [{ "id": 79, "name": "Fire", "__typename": "PokemonType" }],
+          "maxHp": 955,
+          "maxCp": 841,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 5,
+          "name": "Charmeleon",
+          "slug": "charmeleon",
+          "types": [{ "id": 79, "name": "Fire", "__typename": "PokemonType" }],
+          "maxHp": 1557,
+          "maxCp": 1411,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 6,
+          "name": "Charizard",
+          "slug": "charizard",
+          "types": [
+            { "id": 79, "name": "Fire", "__typename": "PokemonType" },
+            { "id": 81, "name": "Flying", "__typename": "PokemonType" }
+          ],
+          "maxHp": 2602,
+          "maxCp": 2413,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 7,
+          "name": "Squirtle",
+          "slug": "squirtle",
+          "types": [{ "id": 75, "name": "Water", "__typename": "PokemonType" }],
+          "maxHp": 1008,
+          "maxCp": 891,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 8,
+          "name": "Wartortle",
+          "slug": "wartortle",
+          "types": [{ "id": 75, "name": "Water", "__typename": "PokemonType" }],
+          "maxHp": 1582,
+          "maxCp": 1435,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 9,
+          "name": "Blastoise",
+          "slug": "blastoise",
+          "types": [{ "id": 75, "name": "Water", "__typename": "PokemonType" }],
+          "maxHp": 2542,
+          "maxCp": 2355,
+          "__typename": "Pokemon"
+        },
+        {
+          "id": 10,
+          "name": "Caterpie",
+          "slug": "caterpie",
+          "types": [{ "id": 84, "name": "Bug", "__typename": "PokemonType" }],
+          "maxHp": 443,
+          "maxCp": 367,
+          "__typename": "Pokemon"
+        }
+      ],
+      "__typename": "ListPokemon"
+    }
+  }
+}

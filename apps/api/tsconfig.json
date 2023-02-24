@@ -1,0 +1,21 @@
+{
+  "extends": "tsconfig/base.json",
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ES2021",
+    "lib": ["ES2021"],
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": ["./src/*"]
+    },
+    "allowJs": true,
+    "outDir": "./dist"
+  },
+  "ts-node": {
+    "files": true
+  }
+}

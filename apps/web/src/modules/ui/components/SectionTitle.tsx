@@ -1,0 +1,7 @@
+import styled from "styled-components";
+
+export const SectionTitle = styled.h2`
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+`;

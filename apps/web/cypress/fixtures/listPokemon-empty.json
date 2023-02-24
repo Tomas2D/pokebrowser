@@ -1,0 +1,13 @@
+{
+  "data": {
+    "listPokemon": {
+      "meta": {
+        "total": 151,
+        "hasMore": false,
+        "__typename": "ListPokemonMeta"
+      },
+      "edges": [],
+      "__typename": "ListPokemon"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+// Vitest Snapshot v1
+
+exports[`Pokemon > retrieves pokemon by id/slug 1`] = `
+{
+  "attacks": [
+    {
+      "category": "fast",
+      "damage": 10,
+      "id": 9,
+      "name": "Ember",
+      "type": {
+        "id": 7,
+        "name": "Fire",
+      },
+    },
+    {
+      "category": "fast",
+      "damage": 6,
+      "id": 10,
+      "name": "Scratch",
+      "type": {
+        "id": 11,
+        "name": "Normal",
+      },
+    },
+    {
+      "category": "special",
+      "damage": 30,
+      "id": 11,
+      "name": "Flame Burst",
+      "type": {
+        "id": 7,
+        "name": "Fire",
+      },
+    },
+    {
+      "category": "special",
+      "damage": 25,
+      "id": 12,
+      "name": "Flame Charge",
+      "type": {
+        "id": 7,
+        "name": "Fire",
+      },
+    },
+    {
+      "category": "special",
+      "damage": 55,
+      "id": 13,
+      "name": "Flamethrower",
+      "type": {
+        "id": 7,
+        "name": "Fire",
+      },
+    },
+  ],
+  "classification": "Lizard Pokémon",
+  "commonCaptureArea": null,
+  "evolutionRequirement": {
+    "amount": 25,
+    "name": "Charmander candies",
+  },
+  "fleeRate": 0.1,
+  "height": {
+    "maximum": 68,
+    "minimum": 53,
+  },
+  "id": 4,
+  "maxCp": 841,
+  "maxHp": 955,
+  "name": "Charmander",
+  "nextEvolution": {
+    "id": 5,
+    "name": "Charmeleon",
+    "slug": "charmeleon",
+  },
+  "previousEvolution": null,
+  "resistants": [
+    {
+      "id": 1,
+      "name": "Grass",
+    },
+    {
+      "id": 6,
+      "name": "Fairy",
+    },
+    {
+      "id": 7,
+      "name": "Fire",
+    },
+    {
+      "id": 8,
+      "name": "Ice",
+    },
+    {
+      "id": 12,
+      "name": "Bug",
+    },
+    {
+      "id": 13,
+      "name": "Steel",
+    },
+  ],
+  "slug": "charmander",
+  "types": [
+    {
+      "id": 7,
+      "name": "Fire",
+    },
+  ],
+  "votesCount": 3,
+  "weaknesses": [
+    {
+      "id": 3,
+      "name": "Water",
+    },
+    {
+      "id": 14,
+      "name": "Ground",
+    },
+    {
+      "id": 15,
+      "name": "Rock",
+    },
+  ],
+  "weight": {
+    "maximum": 956,
+    "minimum": 744,
+  },
+}
+`;
