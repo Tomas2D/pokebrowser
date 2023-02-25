@@ -13,7 +13,9 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 dotenv.config({
-  path: `${root}/.env.${process.env.NODE_ENV}.local`,
+  path: `${root}/.env.${[process.env.NODE_ENV, "local"]
+    .filter(Boolean)
+    .join(".")}`,
   override: true,
 });
 
