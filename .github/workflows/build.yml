@@ -29,18 +29,18 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Bootstrap
         run: npm ci -- --loglevel verbose
-      - name: Build
-        run: npm run build
       - name: Setup database
         uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '5.7'
-        run: |
-          sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE pokemon;' -uroot -proot
-          mysql -e 'SHOW DATABASES;' -uroot -proot
+          root-password: 'root'
+      - run: |
+          mysql -u root -p'root' -h 127.0.0.1 -e 'CREATE DATABASE pokemon;' --default-character-set=utf8
+          mysql -u root -p'root' -h 127.0.0.1 -e 'SHOW DATABASES;' --default-character-set=utf8
           cd apps/api
           npm run database:migrate
           npm run database:import
+      - name: Build
+        run: npm run build
       - name: Tests
         run: npm run test && npm run test:e2e
