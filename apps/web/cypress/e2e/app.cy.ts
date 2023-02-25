@@ -73,16 +73,20 @@ describe("Pokemon's detail page", () => {
     cy.getBySel("general-info-wrapper").should("exist");
     cy.getBySel("attacks-wrapper").scrollIntoView().should("exist");
 
+    cy.get("img").should("be.visible");
+
     cy.getBySel("pokemon-main-image")
       .should("exist")
-      .each(($img: HTMLImageElement[]) => {
-        expect($img[0].naturalWidth).to.be.greaterThan(0);
+      .each(($img) => {
+        const imgElement = $img.get(0) as HTMLImageElement;
+        expect(imgElement.naturalWidth).to.be.greaterThan(0);
       });
 
     cy.getBySel("evolution-image")
       .should("have.length.at.least", 1)
-      .each(($img: HTMLImageElement[]) => {
-        expect($img[0].naturalWidth).to.be.greaterThan(0);
+      .each(($img) => {
+        const imgElement = $img.get(0) as HTMLImageElement;
+        expect(imgElement.naturalWidth).to.be.greaterThan(0);
       });
   });
 
