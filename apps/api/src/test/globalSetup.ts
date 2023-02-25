@@ -9,8 +9,9 @@ import knexConfig from "../database/knexfile.js";
 export async function setup() {
   await initializeServices(knexConfig.test);
   const knex: Knex = Container.get("knex");
+  await knex.migrate.down(knex.client.config).catch(nop);
   await knexCleaner(knex, {
-    mode: "delete",
+    mode: "truncate",
     restartIdentity: true,
     ignoreTables: ["knex_migrations", "knex_migrations_lock"],
   });
@@ -23,7 +24,7 @@ export async function teardown() {
   const knex: Knex = Container.get("knex");
   try {
     await knexCleaner(knex, {
-      mode: "delete",
+      mode: "truncate",
       restartIdentity: true,
       ignoreTables: ["knex_migrations", "knex_migrations_lock"],
     });

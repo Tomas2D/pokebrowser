@@ -87,8 +87,6 @@ function extractAttacks(typeMap: Map<string, number>) {
 
   const pokemonsMap = new Map<string, number>();
 
-  let x = [];
-
   for (const {
     attacks,
     weaknesses,
@@ -113,8 +111,8 @@ function extractAttacks(typeMap: Map<string, number>) {
       commonCaptureArea,
       heightMaximum: Math.round(parseFloat(height.maximum) * 100),
       heightMinimum: Math.round(parseFloat(height.minimum) * 100),
-      weightMinimum: Math.round(parseFloat(weight.minimum) * 100),
-      weightMaximum: Math.round(parseFloat(weight.maximum) * 100),
+      weightMinimum: parseFloat(weight.minimum),
+      weightMaximum: parseFloat(weight.maximum),
       fleeRate,
       maxCp: maxCP,
       maxHp: maxHP,
@@ -123,7 +121,6 @@ function extractAttacks(typeMap: Map<string, number>) {
     };
 
     const trx = await PokemonModel.knex().transaction();
-    x.push(pokemon);
 
     try {
       const response = await PokemonModel.query()

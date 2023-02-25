@@ -4,7 +4,7 @@ import { destroyTestApp, initTestApp, TestApp } from "@app/test/utils/app";
 import { PokemonFilters } from "@app/graphql";
 import { PokemonModel } from "@app/database/models/PokemonModel";
 
-describe.only("Pokemon", async () => {
+describe("Pokemon", async () => {
   let app: TestApp;
 
   beforeAll(async () => {

@@ -124,8 +124,8 @@ exports[`Pokemon > retrieves pokemon by id/slug 1`] = `
     },
   ],
   "weight": {
-    "maximum": 956,
-    "minimum": 744,
+    "maximum": 9.56,
+    "minimum": 7.44,
   },
 }
 `;

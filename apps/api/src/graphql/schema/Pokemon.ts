@@ -14,8 +14,8 @@ export const EvolutionRequirementSchema = objectType({
 export const WeightSchema = objectType({
   name: "Weight",
   definition(t) {
-    t.int("maximum");
-    t.int("minimum");
+    t.float("maximum");
+    t.float("minimum");
   },
 });
 

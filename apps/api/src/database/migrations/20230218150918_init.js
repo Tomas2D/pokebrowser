@@ -21,10 +21,10 @@ exports.up = async function (knex) {
       .onDelete("CASCADE");
     table.integer("evolution_requirement_amount").nullable();
     table.string("evolution_requirement_name").nullable();
-    table.integer("weight_minimum").comment("kilograms");
-    table.integer("weight_maximum").comment("kilograms");
-    table.string("height_minimum").comment("cm");
-    table.string("height_maximum").comment("cm");
+    table.float("weight_minimum").comment("kg");
+    table.float("weight_maximum").comment("kg");
+    table.integer("height_minimum").comment("cm");
+    table.integer("height_maximum").comment("cm");
     table.string("commonCaptureArea").nullable();
     table.float("flee_rate");
     table.integer("max_cp");

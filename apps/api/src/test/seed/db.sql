@@ -28,16 +28,17 @@ LOCK TABLES `pokemon` WRITE;
 
 INSERT INTO `pokemon` (`id`, `name`, `slug`, `classification_id`, `evolution_requirement_amount`, `evolution_requirement_name`, `weight_minimum`, `weight_maximum`, `height_minimum`, `height_maximum`, `common_capture_area`, `flee_rate`, `max_cp`, `max_hp`, `next_evolution_id`)
 VALUES
-	(1,'Bulbasaur','bulbasaur',1,25,'Bulbasaur candies',604,776,'61','79',NULL,0.10,951,1071,2),
-	(2,'Ivysaur','ivysaur',1,100,'Bulbasaur candies',1138,1463,'88','113',NULL,0.07,1483,1632,3),
-	(3,'Venusaur','venusaur',1,NULL,NULL,8750,11250,'175','225',NULL,0.05,2392,2580,NULL),
-	(4,'Charmander','charmander',2,25,'Charmander candies',744,956,'53','68',NULL,0.10,841,955,5),
-	(5,'Charmeleon','charmeleon',3,100,'Charmander candies',1663,2138,'96','124',NULL,0.07,1411,1557,6),
-	(6,'Charizard','charizard',3,NULL,NULL,7919,10181,'149','191',NULL,0.05,2413,2602,NULL),
-	(7,'Squirtle','squirtle',4,25,'Squirtle candies',788,1013,'44','56',NULL,0.10,891,1008,8),
-	(8,'Wartortle','wartortle',5,100,'Squirtle candies',1969,2531,'88','113',NULL,0.07,1435,1582,9),
-	(9,'Blastoise','blastoise',6,NULL,NULL,7481,9619,'140','180',NULL,0.05,2355,2542,NULL),
-	(10,'Caterpie','caterpie',7,12,'Caterpie candies',254,326,'26','34',NULL,0.20,367,443,NULL);
+	(1, 'Bulbasaur', 'bulbasaur', 1, 25, 'Bulbasaur candies', 6.04, 7.76, 61, 79, NULL, 0.10, 951, 1071, 2),
+	(2, 'Ivysaur', 'ivysaur', 1, 100, 'Bulbasaur candies', 11.38, 14.63, 88, 113, NULL, 0.07, 1483, 1632, 3),
+	(3, 'Venusaur', 'venusaur', 1, NULL, NULL, 87.50, 112.50, 175, 225, NULL, 0.05, 2392, 2580, NULL),
+	(4, 'Charmander', 'charmander', 2, 25, 'Charmander candies', 7.44, 9.56, 53, 68, NULL, 0.10, 841, 955, 5),
+	(5, 'Charmeleon', 'charmeleon', 3, 100, 'Charmander candies', 16.63, 21.38, 96, 124, NULL, 0.07, 1411, 1557, 6),
+	(6, 'Charizard', 'charizard', 3, NULL, NULL, 79.19, 101.81, 149, 191, NULL, 0.05, 2413, 2602, NULL),
+	(7, 'Squirtle', 'squirtle', 4, 25, 'Squirtle candies', 7.88, 10.13, 44, 56, NULL, 0.10, 891, 1008, 8),
+	(8, 'Wartortle', 'wartortle', 5, 100, 'Squirtle candies', 19.69, 25.31, 88, 113, NULL, 0.07, 1435, 1582, 9),
+	(9, 'Blastoise', 'blastoise', 6, NULL, NULL, 74.81, 96.19, 140, 180, NULL, 0.05, 2355, 2542, NULL),
+	(10, 'Caterpie', 'caterpie', 7, 12, 'Caterpie candies', 2.54, 3.26, 26, 34, NULL, 0.20, 367, 443, 11);
+
 
 /*!40000 ALTER TABLE `pokemon` ENABLE KEYS */;
 UNLOCK TABLES;
