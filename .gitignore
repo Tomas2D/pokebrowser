@@ -34,3 +34,5 @@ yarn-error.log*
 dist/
 build/
 apps/web/cypress/videos
+apps/web/cypress/screenshots
+apps/api/src/graphql/generated
