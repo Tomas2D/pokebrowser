@@ -23,6 +23,7 @@ module.exports = {
       database: process.env.DB_NAME,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
+      charset: "utf8mb4",
     },
     pool: {
       min: 1,
@@ -41,6 +42,7 @@ module.exports = {
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       multipleStatements: true,
+      charset: "utf8mb4",
     },
     pool: {
       min: 1,

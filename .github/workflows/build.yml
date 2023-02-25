@@ -35,8 +35,8 @@ jobs:
           mysql-version: '5.7'
           root-password: 'root'
       - run: |
-          mysql -u root -p'root' -h 127.0.0.1 -e 'CREATE DATABASE pokemon;' --default-character-set=utf8
-          mysql -u root -p'root' -h 127.0.0.1 -e 'SHOW DATABASES;' --default-character-set=utf8
+          mysql -u root -p'root' -h 127.0.0.1 -e 'CREATE DATABASE pokemon CHARACTER SET utf8mb4'
+          mysql -u root -p'root' -h 127.0.0.1 -e 'SHOW DATABASES;'
           cd apps/api
           npm run database:migrate
           npm run database:import
