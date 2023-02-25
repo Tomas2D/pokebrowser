@@ -59,9 +59,7 @@ export async function listPokemon({
   relations,
   filters: { typeId = [], offset = 0, size = 20, name = "", favoriteByUserId },
 }: ListPokemonOptions) {
-  const query = PokemonModel.query()
-    .leftJoinRelated(PokemonRelations.TYPES)
-    .orderBy("types.id");
+  const query = PokemonModel.query().leftJoinRelated(PokemonRelations.TYPES);
 
   if (name?.trim()) {
     query.where(PokemonModel.ref("name"), "LIKE", `%${name!.trim()}%`);
