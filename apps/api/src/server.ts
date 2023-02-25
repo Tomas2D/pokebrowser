@@ -36,14 +36,15 @@ export async function main(onClose: () => any = nop) {
     },
   } as any);
 
-  await app.register(fastifyGracefulShutdown);
-
-  app.after(() => {
-    app.gracefulShutdown((signal, next) => {
-      app.log.info("Terminating server");
-      next();
+  if (process.env.GRACEFUL_SHUTDOWN !== "false") {
+    await app.register(fastifyGracefulShutdown);
+    app.after(() => {
+      app.gracefulShutdown((signal, next) => {
+        app.log.info("Terminating server");
+        next();
+      });
     });
-  });
+  }
 
   await app.register(cors, {
     origin: [app.config.CORS_ORIGIN],
