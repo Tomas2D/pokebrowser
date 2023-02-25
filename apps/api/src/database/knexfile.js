@@ -3,11 +3,15 @@ const root = path.join(__dirname, "../..");
 
 const dotenv = require("dotenv");
 dotenv.config({ path: `${root}/.env` });
-dotenv.config({ path: `${root}/.env.${process.env.NODE_ENV}`, override: true });
+
 /* c8 ignore next */
 if (process.env.NODE_ENV !== "test") {
-  dotenv.config({ path: `${root}/.env.local`, override: true });
+  dotenv.config({
+    path: `${root}/.env.${process.env.NODE_ENV}`,
+    override: true,
+  });
 }
+
 dotenv.config({
   path: `${root}/.env.${process.env.NODE_ENV}.local`,
   override: true,
