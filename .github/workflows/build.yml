@@ -1,0 +1,46 @@
+name: build
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    env:
+      DB_HOST: "127.0.0.1"
+      DB_NAME: pokemon
+      DB_USER: root
+      DB_PASS: root
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Setup repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+      - name: Bootstrap
+        run: npm ci -- --loglevel verbose
+      - name: Build
+        run: npm run build
+      - name: Setup database
+        uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '5.7'
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE pokemon;' -uroot -proot
+          mysql -e 'SHOW DATABASES;' -uroot -proot
+          cd apps/api
+          npm run database:migrate
+          npm run database:import
+      - name: Tests
+        run: npm run test && npm run test:e2e
