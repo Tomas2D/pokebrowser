@@ -14,7 +14,7 @@
     "build": "turbo run build --filter=api && start-server-and-test 'turbo run dev --filter=api' 4000 'turbo run build --filter=web'",
     "dev": "turbo run dev",
     "test": "turbo run test",
-    "test:e2e": "start-server-and-test 'turbo run start:dev --filter=api' 4000 'turbo run test:e2e --filter=web'",
+    "test:e2e": "start-server-and-test 'turbo run start:e2e --filter=api' 4000 'turbo run test:e2e --filter=web'",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

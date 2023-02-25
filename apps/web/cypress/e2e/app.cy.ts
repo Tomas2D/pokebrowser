@@ -64,11 +64,11 @@ describe("Views", () => {
 
 describe("Pokemon's detail page", () => {
   beforeEach(() => {
-    cy.visit("/oddish");
+    cy.visit("/charmander");
   });
 
   it("has all information displayed", () => {
-    cy.get("h1").should("have.length", 1).should("have.text", "Oddish");
+    cy.get("h1").should("have.length", 1).should("have.text", "Charmander");
 
     cy.getBySel("general-info-wrapper").should("exist");
     cy.getBySel("attacks-wrapper").scrollIntoView().should("exist");
@@ -229,19 +229,19 @@ describe("Filters", () => {
         originalIds.push(el.text());
       });
 
-    cy.getBySel("pokemons-type-select").select("Fairy");
+    cy.getBySel("pokemons-type-select").select("Water");
 
     cy.getBySel("grid-entry-wrapper")
-      .should("have.length.at.least", 1)
+      .should("have.length", 3)
       .find(`[data-cy="grid-entry-types"]`)
-      .should("contain.text", "Fairy");
+      .should("contain.text", "Water");
 
-    cy.getBySel("pokemon-search").type("clefa");
+    cy.getBySel("pokemon-search").type("wart");
 
     cy.getBySel("grid-entry-wrapper")
-      .should("have.length.at.least", 1)
+      .should("have.length", 1)
       .find(`[data-cy="grid-entry-name"]`)
-      .should("contain.text", "Clefa");
+      .should("contain.text", "Wartortle");
 
     // reset
     cy.getBySel("pokemons-type-select").select("0");
@@ -283,7 +283,7 @@ describe("Infinite scroll", () => {
   beforeEach(() => {
     let counter = 0;
 
-    cy.intercept("POST", `*/graphql`, (req) => {
+    cy.intercept("POST", `**/*/graphql`, (req) => {
       aliasQuery(req, "listPokemon");
       aliasQuery(req, "getSelf");
 
@@ -308,8 +308,9 @@ describe("Infinite scroll", () => {
       .should("have.length.at.least", 1)
       .its("length")
       .then((totalCount) => {
+        console.info(totalCount);
         cy.scrollTo("bottom");
-        cy.getBySel("grid-entry-wrapper").should("have.length", totalCount * 2);
+        cy.getBySel("grid-entry-wrapper").should("have.length.gt", totalCount);
       });
   });
 

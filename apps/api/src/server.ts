@@ -8,8 +8,10 @@ import { initRouter } from "@app/router";
 import { makeSchema } from "./graphql/makeSchema";
 import fastifyEnv from "@fastify/env";
 import { destroyServices } from "@app/setup";
+import { nop } from "rambda";
+import fastifyGracefulShutdown from "fastify-graceful-shutdown";
 
-export async function main() {
+export async function main(onClose: () => any = nop) {
   const schema = makeSchema();
 
   const app = await fastify({
@@ -34,6 +36,15 @@ export async function main() {
     },
   } as any);
 
+  await app.register(fastifyGracefulShutdown);
+
+  app.after(() => {
+    app.gracefulShutdown((signal, next) => {
+      app.log.info("Terminating server");
+      next();
+    });
+  });
+
   await app.register(cors, {
     origin: [app.config.CORS_ORIGIN],
     credentials: true,
@@ -43,7 +54,7 @@ export async function main() {
   await app.addHook("onRequest", authMiddleware);
 
   app.addHook("onClose", async () => {
-    app.log.info("Terminating server");
+    await onClose();
     await destroyServices();
   });
 
