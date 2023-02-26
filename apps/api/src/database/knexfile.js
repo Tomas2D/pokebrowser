@@ -21,43 +21,38 @@ dotenv.config({
 
 const { knexSnakeCaseMappers } = require("objection");
 
-module.exports = {
-  development: {
-    client: "mysql2",
-    connection: {
-      host: process.env.DB_HOST,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      charset: "utf8mb4",
-    },
-    pool: {
-      min: 1,
-      max: 1,
-    },
-    migrations: {
-      tableName: "knex_migrations",
-    },
-    ...knexSnakeCaseMappers(),
+const baseConfig = {
+  client: "mysql2",
+  connection: {
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    charset: "utf8mb4",
   },
+  pool: {
+    min: Math.max(parseInt(process.env.DB_POOL_MIN || "1"), 1),
+    max: Math.max(parseInt(process.env.DB_POOL_MAX || "1"), 1),
+  },
+  migrations: {
+    tableName: "knex_migrations",
+    directory: path.join(__dirname, "/migrations"),
+  },
+  ...knexSnakeCaseMappers(),
+};
+
+module.exports = {
+  development: baseConfig,
   test: {
-    client: "mysql2",
+    ...baseConfig,
     connection: {
-      host: process.env.DB_HOST,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
+      ...baseConfig.connection,
       multipleStatements: true,
-      charset: "utf8mb4",
     },
     pool: {
+      ...baseConfig.pool,
       min: 1,
       max: 1,
     },
-    migrations: {
-      tableName: "knex_migrations",
-      directory: `src/database/migrations`,
-    },
-    ...knexSnakeCaseMappers(),
   },
 };

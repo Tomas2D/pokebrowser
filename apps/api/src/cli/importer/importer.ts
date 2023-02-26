@@ -158,7 +158,7 @@ function extractAttacks(typeMap: Map<string, number>) {
           .transacting(trx);
       }
 
-      console.info(`Pokemon "${response.id}" inserted`);
+      console.info(`Pokemon "${name}" (ID: ${response.id}) inserted`);
       pokemonsMap.set(response.name, response.id);
       await trx.commit();
     } catch (e) {

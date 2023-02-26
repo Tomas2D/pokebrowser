@@ -91,7 +91,7 @@ describe("Pokemon", async () => {
     expect(result.data.listPokemon.meta).toMatchInlineSnapshot(`
       {
         "hasMore": true,
-        "total": 10,
+        "total": 30,
       }
     `);
   });

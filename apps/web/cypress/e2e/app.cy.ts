@@ -281,25 +281,6 @@ describe("Empty states", () => {
 
 describe("Infinite scroll", () => {
   beforeEach(() => {
-    let counter = 0;
-
-    cy.intercept("POST", `**/*/graphql`, (req) => {
-      aliasQuery(req, "listPokemon");
-      aliasQuery(req, "getSelf");
-
-      if (hasOperationName(req, "listPokemon")) {
-        counter++;
-        req.reply({
-          fixture:
-            counter <= 2
-              ? `listPokemon-${counter}.json`
-              : "listPokemon-empty.json",
-        });
-      } else {
-        req.continue();
-      }
-    });
-
     cy.visit("/");
   });
 
@@ -310,7 +291,7 @@ describe("Infinite scroll", () => {
       .then((totalCount) => {
         console.info(totalCount);
         cy.scrollTo("bottom");
-        cy.getBySel("grid-entry-wrapper").should("have.length.gt", totalCount);
+        cy.getBySel("grid-entry-wrapper").should("have.length", totalCount * 2);
       });
   });
 
