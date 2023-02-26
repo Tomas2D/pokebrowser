@@ -9,10 +9,12 @@ import styled from "styled-components";
 import { usePokemonActions } from "@module/pokemon/hooks/usePokemonActions";
 import { InlineLoading } from "carbon-components-react";
 import { AnimatedUnmount } from "@module/ui/components/AnimatedUnmount";
+import { NotificationContext } from "@module/notification/NotificationContext";
 
 export interface PokemonFavoriteButtonProps {
   pokemon: {
     id: number;
+    name: string;
     slug: string;
   };
   size?: number;
@@ -25,6 +27,8 @@ export function PokemonVoteButton({
   children,
 }: PokemonFavoriteButtonProps) {
   const { user } = useContext(UserContext);
+  const { addNotification } = useContext(NotificationContext);
+
   const { onVote, onUnVote, unVoteMeta, voteMeta } = usePokemonActions({
     id: pokemon.id,
     slug: pokemon.slug,
@@ -44,9 +48,31 @@ export function PokemonVoteButton({
     }
 
     if (isInFavorite) {
-      onUnVote();
+      onUnVote()
+        .then(() => {
+          addNotification({
+            title: `${pokemon.name} has been removed from favorites!`,
+          });
+        })
+        .catch(() => {
+          addNotification({
+            title: `Failed to remove ${pokemon.name} from your favorites!`,
+            type: "error",
+          });
+        });
     } else {
-      onVote();
+      onVote()
+        .then(() => {
+          addNotification({
+            title: `${pokemon.name} has been saved to your favorites!`,
+          });
+        })
+        .catch(() => {
+          addNotification({
+            title: `Failed to add ${pokemon.name} to your favorites!`,
+            type: "error",
+          });
+        });
     }
   };
 

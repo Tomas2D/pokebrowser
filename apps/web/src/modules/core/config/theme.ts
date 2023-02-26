@@ -2,6 +2,7 @@ const colors = {
   text: "#312e2e",
   title: "#000",
   neutral: "#fff",
+  notificationBg: "#faf8f8",
   layoutBg: "#f6f3f3",
   contentBg: "#fff",
   favoriteButtonBg: "#c5c5c5",

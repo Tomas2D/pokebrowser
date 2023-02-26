@@ -18,6 +18,10 @@ describe("Homepage data validation", () => {
     cy.getBySel("grid-entry-wrapper")
       .find(`[data-cy="grid-entry-types"]`)
       .should("not.have.text", "");
+
+    cy.getBySel("grid-entry-wrapper")
+      .find(`[data-cy="pokemon-quick-preview-button"]`)
+      .should("exist");
   });
 
   it("should show some pokemons", () => {

@@ -5,6 +5,8 @@ import { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/client";
 import { UserContextProvider } from "@app/modules/user/UserContext";
 import { PokemonContextProvider } from "@module/pokemon/PokemonContext";
+import { NotificationContextProvider } from "@module/notification/NotificationContext";
+import { NotificationList } from "@module/notification/components/NotificationList";
 
 interface CoreProps extends Pick<AppProps, "pageProps"> {
   children?: ReactNode;
@@ -16,9 +18,16 @@ export function Core({ children, pageProps }: CoreProps) {
   return (
     <ApolloProvider client={apolloClient}>
       <ThemeProvider>
-        <UserContextProvider>
-          <PokemonContextProvider>{children}</PokemonContextProvider>
-        </UserContextProvider>
+        <NotificationContextProvider>
+          <UserContextProvider>
+            <PokemonContextProvider>
+              <>
+                <NotificationList />
+                {children}
+              </>
+            </PokemonContextProvider>
+          </UserContextProvider>
+        </NotificationContextProvider>
       </ThemeProvider>
     </ApolloProvider>
   );
