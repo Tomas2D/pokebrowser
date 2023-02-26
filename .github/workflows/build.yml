@@ -33,15 +33,16 @@ jobs:
         uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '5.7'
-          root-password: 'root'
+          root-password: ${{ env.DB_PASS }}
       - name: Prepare database
         run: |
-          mysql -u root -p'root' -h 127.0.0.1 -e 'CREATE DATABASE pokemon CHARACTER SET utf8mb4'
-          mysql -u root -p'root' -h 127.0.0.1 -e 'SHOW DATABASES;'
+          mysql -u ${{ env.DB_USER }} -p${{ env.DB_PASS }} -h ${{ env.DB_HOST }} -e "CREATE DATABASE ${{ env.DB_NAME }} CHARACTER SET utf8mb4"
           cd apps/api
           npm run database:migrate
           npm run database:import
       - name: Build
         run: npm run build
-      - name: Tests
-        run: npm run test && npm run test:e2e
+      - name: Run unit/integration tests
+        run: npm run test
+      - name: Run E2E tests
+        run: npm run test:e2e
