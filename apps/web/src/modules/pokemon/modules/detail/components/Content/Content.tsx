@@ -11,7 +11,7 @@ import {
 } from "carbon-components-react";
 import { PlaySound } from "@module/pokemon/modules/detail/components/PlaySound";
 import { Block } from "@module/ui/components/Block";
-import { TagsSection } from "@module/pokemon/modules/detail/components/Content/TagsSection";
+import { TagsSection } from "@module/ui/components/TagsSection";
 import { Evolution } from "./Evolution/Evolution";
 import { SectionTitle } from "@app/modules/ui/components/SectionTitle";
 import { Paragraph } from "@module/ui/components/Paragraph";
@@ -53,25 +53,27 @@ export function Content({ data }: ContentProps) {
                 <StructuredListWrapper isCondensed>
                   <StructuredListBody>
                     {[
-                      [
+                      data.weight && [
                         "Weight",
                         `${data.weight.minimum}\u00A0kg\u00A0-\u00A0${data.weight.maximum}\u00A0kg`,
                       ],
-                      [
+                      data.height && [
                         "Height",
                         `${data.height.minimum}\u00A0cm\u00A0-\u00A0${data.height.maximum}\u00A0cm`,
                       ],
                       ["Max Health", data.maxHp],
                       ["Combat Power", data.maxCp],
                       ["Flee Rate", data.fleeRate],
-                    ].map(([title, number], i) => (
-                      <StructuredListRow key={i}>
-                        <StructuredListCell>
-                          <strong>{title}</strong>
-                        </StructuredListCell>
-                        <StructuredListCell>{number}</StructuredListCell>
-                      </StructuredListRow>
-                    ))}
+                    ]
+                      .filter(Boolean)
+                      .map(([title, number], i) => (
+                        <StructuredListRow key={i}>
+                          <StructuredListCell>
+                            <strong>{title}</strong>
+                          </StructuredListCell>
+                          <StructuredListCell>{number}</StructuredListCell>
+                        </StructuredListRow>
+                      ))}
                   </StructuredListBody>
                 </StructuredListWrapper>
               </StyledListWrapper>
@@ -105,54 +107,62 @@ export function Content({ data }: ContentProps) {
             )}
 
             <Block>
-              <TagsSection
-                title={"Type"}
-                tagType={"green"}
-                data={data.types}
-                tooltipLabel={(item) => `ID: ${item.id}`}
-              />
+              {data.types && (
+                <TagsSection
+                  title={"Type"}
+                  tagType={"green"}
+                  data={data.types}
+                  tooltipLabel={(item) => `ID: ${item.id}`}
+                />
+              )}
 
-              <TagsSection
-                title={"Weaknesses"}
-                tagType={"teal"}
-                data={data.weaknesses}
-                tooltipLabel={(item) => `ID: ${item.id}`}
-              />
+              {data.weaknesses && (
+                <TagsSection
+                  title={"Weaknesses"}
+                  tagType={"teal"}
+                  data={data.weaknesses}
+                  tooltipLabel={(item) => `ID: ${item.id}`}
+                />
+              )}
             </Block>
           </StyledInlineWrapper>
         </Block>
 
-        <Block data-cy={"attacks-wrapper"}>
-          <SectionTitle>Attacks</SectionTitle>
-          <Paragraph>
-            {data.commonCaptureArea ||
-              `Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+        {data.attacks && (
+          <Block data-cy={"attacks-wrapper"}>
+            <SectionTitle>Attacks</SectionTitle>
+            <Paragraph>
+              {data.commonCaptureArea ||
+                `Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
             Pellentesque arcu. Morbi scelerisque luctus velit. Nullam at arcu a
             est sollicitudin euismod. Ut tempus purus at lorem. Maecenas ipsum
             velit, consectetuer eu lobortis ut, dictum at dui. Nullam dapibus
             fermentum ipsum. Curabitur bibendum justo non orci. Donec iaculis
             gravida nulla. Vestibulum fermentum tortor id mi. Sed ac dolor sit
             amet purus malesuada congue.`}
-          </Paragraph>
+            </Paragraph>
 
-          <StyledInlineWrapper>
-            <TagsSection
-              title={"Fast"}
-              tagType={"red"}
-              tooltipLabel={(attack) => `Damage: ${attack.damage}`}
-              data={data.attacks.filter(({ category }) => category === "fast")}
-            />
+            <StyledInlineWrapper>
+              <TagsSection
+                title={"Fast"}
+                tagType={"red"}
+                tooltipLabel={(attack) => `Damage: ${attack.damage}`}
+                data={data.attacks.filter(
+                  ({ category }) => category === "fast"
+                )}
+              />
 
-            <TagsSection
-              title={"Special"}
-              tagType={"purple"}
-              tooltipLabel={(attack) => `Damage: ${attack.damage}`}
-              data={data.attacks.filter(
-                ({ category }) => category === "special"
-              )}
-            />
-          </StyledInlineWrapper>
-        </Block>
+              <TagsSection
+                title={"Special"}
+                tagType={"purple"}
+                tooltipLabel={(attack) => `Damage: ${attack.damage}`}
+                data={data.attacks.filter(
+                  ({ category }) => category === "special"
+                )}
+              />
+            </StyledInlineWrapper>
+          </Block>
+        )}
       </StyledRightWrapper>
     </StyledWrapper>
   );

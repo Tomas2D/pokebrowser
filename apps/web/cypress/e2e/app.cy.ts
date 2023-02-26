@@ -20,12 +20,38 @@ describe("Homepage data validation", () => {
       .should("not.have.text", "");
 
     cy.getBySel("grid-entry-wrapper")
-      .find(`[data-cy="pokemon-quick-preview-button"]`)
+      .find(`[data-cy="pokemon-preview-button"]`)
       .should("exist");
   });
 
   it("should show some pokemons", () => {
     cy.getBySel("grid-entry-wrapper").should("have.length", 10);
+  });
+});
+
+describe("Quick view", () => {
+  beforeEach(() => {
+    cy.visit("/");
+  });
+
+  it("opens dialog", () => {
+    cy.getBySel("pokemon-preview-modal").should("not.exist");
+
+    cy.getBySel("grid-entry-wrapper")
+      .first()
+      .find(`[data-cy="pokemon-preview-button"]`)
+      .click();
+
+    cy.getBySel("pokemon-preview-modal").should("be.visible");
+    cy.get("img").should("be.visible");
+
+    cy.getBySel("pokemon-preview-modal")
+      .find('[data-cy="pokemon-main-image"]')
+      .should("exist")
+      .each(($img) => {
+        const imgElement = $img.get(0) as HTMLImageElement;
+        expect(imgElement.naturalWidth).to.be.greaterThan(0);
+      });
   });
 });
 

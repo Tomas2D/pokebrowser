@@ -12,6 +12,7 @@ import { getPokemonPreviewImage } from "@module/pokemon/utils";
 import Link from "next/link";
 import { AppRoutes } from "@app/config";
 
+import { PokemonPreview } from "@app/modules/pokemon/components/PokemonPreview";
 interface GridEntryProps {
   data: Pokemon;
 }
@@ -36,6 +37,7 @@ export function GridEntry({ data }: GridEntryProps) {
           </StyledTypes>
         </StyledFooterContent>
         <PokemonVoteButton pokemon={data} />
+        <PokemonPreview pokemon={data} />
       </StyledFooter>
     </StyledWrapper>
   );

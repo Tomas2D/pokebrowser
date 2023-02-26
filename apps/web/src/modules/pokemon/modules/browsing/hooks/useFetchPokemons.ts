@@ -18,8 +18,21 @@ export const FETCH_POKEMONS_QUERY = gql`
           id
           name
         }
+        weaknesses {
+          id
+          name
+        }
+        weight {
+          minimum
+          maximum
+        }
+        height {
+          minimum
+          maximum
+        }
         maxHp
         maxCp
+        fleeRate
       }
     }
   }

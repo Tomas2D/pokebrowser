@@ -7,7 +7,9 @@ Application is fully tested (E2E tests - Cypress, Integration/Unit tests - Vites
 
 ![Homepage](./assets/screenshot-1.png)
 
-![Detail page](./assets/screenshot-2.png)
+![Quick Preview](./assets/screenshot-3.png)
+
+![Detail Page](./assets/screenshot-2.png)
 
 ## Features
 
