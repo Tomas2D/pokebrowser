@@ -43,6 +43,8 @@ $ npm run database:migrate
 $ npm run database:import
 ```
 
+if you are unsure, check the GitHub Action which bootstraps the whole project including E2E tests (`.github/workfows/build.yml`).
+
 ### Develop
 
 To develop all apps and packages, run the following command:
@@ -67,8 +69,14 @@ To run unit and integration test, simply run:
 $ npm run test
 ```
 
-to run E2E test, run:
+
+## How are E2E tests accomplished?
+
+Once you run:
 
 ```bash
 $ npm run test:e2e
 ```
+
+the API will truncate a specified database (specified in `apps/.env.test.local`) and 
+starts listing on port 4000 then the Cypress (web package) will start in headless mode.  
