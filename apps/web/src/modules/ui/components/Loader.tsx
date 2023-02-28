@@ -23,7 +23,7 @@ export function Loader({
     <StyledWrapper {...props} $lettersCount={loadingText.length}>
       <StyledWrapperLoading>
         {loadingText!
-          .replace(" ", "\u00A0")
+          .replace(/" "/g, "\u00A0")
           .split("")
           .map((letter, i) => (
             <StyledLetter key={i}>{letter}</StyledLetter>
