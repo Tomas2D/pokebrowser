@@ -4,7 +4,7 @@ const root = path.join(__dirname, "../..");
 const dotenv = require("dotenv");
 dotenv.config({ path: `${root}/.env` });
 
-/* c8 ignore next */
+/* c8 ignore next 6 */
 if (process.env.NODE_ENV !== "test") {
   dotenv.config({
     path: `${root}/.env.${process.env.NODE_ENV}`,

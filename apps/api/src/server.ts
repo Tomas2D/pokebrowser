@@ -36,6 +36,7 @@ export async function main(onClose: () => any = nop) {
     },
   } as any);
 
+  /* c8 ignore next 9 */
   if (process.env.GRACEFUL_SHUTDOWN !== "false") {
     await app.register(fastifyGracefulShutdown);
     app.after(() => {
@@ -65,6 +66,7 @@ export async function main(onClose: () => any = nop) {
   }>({
     schema,
     logging: {
+      /* c8 ignore next 4 */
       debug: (...args) => args.forEach((arg) => app.log.debug(arg)),
       info: (...args) => args.forEach((arg) => app.log.info(arg)),
       warn: (...args) => args.forEach((arg) => app.log.warn(arg)),

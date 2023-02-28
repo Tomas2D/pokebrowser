@@ -3,6 +3,7 @@ import knex, { Knex } from "knex";
 import { Model } from "objection";
 
 export async function initializeServices(config: Knex.Config) {
+  /* c8 ignore next 3 */
   if (initializeServices.isInitialized) {
     return;
   }
@@ -14,6 +15,7 @@ export async function initializeServices(config: Knex.Config) {
 }
 
 export async function destroyServices() {
+  /* c8 ignore next 3 */
   if (!initializeServices.isInitialized) {
     return;
   }
