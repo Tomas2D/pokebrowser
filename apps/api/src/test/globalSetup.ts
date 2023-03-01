@@ -4,7 +4,7 @@ import Container from "typedi";
 import { nop } from "rambda";
 import { seedDatabase } from "@app/test/seed/seed";
 import { clean as knexCleaner } from "knex-cleaner";
-import knexConfig from "../database/knexfile.js";
+import knexConfig from "../database/knexfile";
 
 export async function setup() {
   await initializeServices(knexConfig.test);

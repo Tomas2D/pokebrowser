@@ -1,4 +1,6 @@
-exports.up = async function (knex) {
+import type { Knex } from "knex";
+
+export async function up(knex: Knex) {
   await knex.schema.createTable("pokemon_classification", function (table) {
     table.increments("id").primary();
     table.string("name", 255).notNullable().unique();
@@ -145,9 +147,9 @@ exports.up = async function (knex) {
       .onDelete("CASCADE");
     table.primary(["pokemon_id", "attack_id"]);
   });
-};
+}
 
-exports.down = async function (knex) {
+export async function down(knex: Knex) {
   await knex.schema.dropTableIfExists("pokemon_attack_pokemon");
   await knex.schema.dropTableIfExists("pokemon_weakness_pokemon");
   await knex.schema.dropTableIfExists("pokemon_resistant_pokemon");
@@ -158,4 +160,4 @@ exports.down = async function (knex) {
   await knex.schema.dropTableIfExists("pokemon_type");
   await knex.schema.dropTableIfExists("pokemon_classification");
   await knex.schema.dropTableIfExists("user");
-};
+}

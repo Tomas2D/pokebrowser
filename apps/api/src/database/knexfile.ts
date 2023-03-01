@@ -37,11 +37,12 @@ const baseConfig = {
   migrations: {
     tableName: "knex_migrations",
     directory: path.join(__dirname, "/migrations"),
+    extension: "ts",
   },
   ...knexSnakeCaseMappers(),
 };
 
-module.exports = {
+const config = {
   development: baseConfig,
   test: {
     ...baseConfig,
@@ -56,3 +57,6 @@ module.exports = {
     },
   },
 };
+
+export default config;
+module.exports = config;
