@@ -53,7 +53,7 @@ export async function main(onClose: () => any = nop) {
   });
 
   await app.register(cookie);
-  await app.addHook("onRequest", authMiddleware);
+  app.addHook("onRequest", authMiddleware);
 
   app.addHook("onClose", async () => {
     await onClose();

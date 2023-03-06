@@ -9,7 +9,7 @@ export const userResolver = (t: ObjectDefinitionBlock<"Query">) => {
     args: {
       id: stringArg(),
     },
-    resolve: async (parent, { id }) => userService.getUser(id!),
+    resolve: async (parent, { id }) => userService.getUser(id),
   });
 
   t.field("getSelf", {

@@ -111,7 +111,7 @@ export const PokemonSchema = objectType({
           .count("*", {
             as: "count",
           })
-          .where("pokemonId", parent.id!)
+          .where("pokemonId", parent.id)
           .first();
 
         // @ts-expect-error cannot infer "count" property

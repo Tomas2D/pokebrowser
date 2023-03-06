@@ -1,6 +1,5 @@
 import { animated, useTransition } from "@react-spring/web";
-import { ReactNode, useEffect, useState } from "react";
-import { PickAnimated } from "@react-spring/core/dist/declarations/src/types/props";
+import type { ReactNode } from "react";
 
 interface AnimatedUnmountProps {
   children: ReactNode;

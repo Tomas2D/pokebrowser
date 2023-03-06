@@ -62,7 +62,7 @@ export async function listPokemon({
   const query = PokemonModel.query().leftJoinRelated(PokemonRelations.TYPES);
 
   if (name?.trim()) {
-    query.where(PokemonModel.ref("name"), "LIKE", `%${name!.trim()}%`);
+    query.where(PokemonModel.ref("name"), "LIKE", `%${name.trim()}%`);
   }
 
   if (!isEmpty(typeId)) {
@@ -74,7 +74,7 @@ export async function listPokemon({
       PokemonVoteModel.query()
         .select(1)
         .where(PokemonVoteModel.ref("pokemonId"), PokemonModel.ref("id"))
-        .andWhere(PokemonVoteModel.ref("userId"), "=", favoriteByUserId!)
+        .andWhere(PokemonVoteModel.ref("userId"), "=", favoriteByUserId)
     );
   }
 
