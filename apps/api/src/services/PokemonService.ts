@@ -1,39 +1,33 @@
 import {
   PokemonModel,
   PokemonRelations,
-  PokemonRelationsType,
 } from "@app/database/models/PokemonModel";
 import { isEmpty } from "rambda";
 import { PokemonVoteModel } from "@app/database/models/PokemonVoteModel";
 import { PokemonTypeModel } from "@app/database/models/PokemonTypeModel";
 import { pickFirstKey } from "@app/graphql/utilities";
 import { getRelationPrimaryKey } from "@app/helpers";
-import { PokemonAttackModel } from "@app/database/models/PokemonAttackModel";
+import * as console from "console";
 
-export async function getPokemon(
-  id: number,
-  relations: PokemonRelationsType[] = []
-) {
+export async function getPokemon(id: number, relations: string[] = []) {
   const query = PokemonModel.query();
-  relations.forEach((relation) =>
+
+  for (const relation of relations) {
     query.withGraphFetched(relation).modifyGraph(relation, (builder) => {
       const modelClass = query.modelClass();
       if (relation === PokemonRelations.ATTACKS) {
-        const attackTypeRelation = PokemonAttackModel.getRelation("type").name;
-        builder.withGraphFetched(attackTypeRelation);
+        builder.withGraphFetched("type");
       }
-      builder.orderBy(getRelationPrimaryKey(modelClass, relation));
-    })
-  );
+      const relationName = relation.split(".").pop()!;
+      builder.orderBy(getRelationPrimaryKey(modelClass, relationName));
+    });
+  }
 
   const result = await query.findById(id);
   return result || null;
 }
 
-export async function getPokemonBySlug(
-  slug: string,
-  relations: PokemonRelationsType[] = []
-) {
+export async function getPokemonBySlug(slug: string, relations: string[] = []) {
   const pokemon = await PokemonModel.query()
     .select("id")
     .findOne({
@@ -41,6 +35,7 @@ export async function getPokemonBySlug(
     })
     .first();
 
+  console.info(relations);
   return pokemon ? getPokemon(pokemon.id, relations) : null;
 }
 
@@ -52,7 +47,7 @@ export interface ListPokemonOptions {
     size?: number;
     favoriteByUserId?: number;
   };
-  relations: PokemonRelationsType[];
+  relations: string[];
 }
 
 export async function listPokemon({
@@ -94,13 +89,11 @@ export async function listPokemon({
 
   const resultsWithRelations: PokemonModel[] = await Promise.all(
     results.map(async (result: PokemonModel) => {
-      await Promise.all(
-        relations.map((relation) =>
-          result
-            .$fetchGraph(relation)
-            .orderBy(getRelationPrimaryKey(result, relation))
-        )
-      );
+      for (const relation of relations) {
+        await result.$fetchGraph(relation, {
+          skipFetched: true,
+        });
+      }
       return result;
     })
   );

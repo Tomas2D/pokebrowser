@@ -10,7 +10,10 @@ import { PokemonSchema, PokemonTypeSchema } from "@app/graphql/schema/Pokemon";
 import * as pokemonService from "@app/services/PokemonService";
 import { ListPokemonOptions } from "@app/services/PokemonService";
 import { ObjectDefinitionBlock } from "nexus/dist/definitions/objectType";
-import { extraPokemonRelations } from "@app/graphql/utilities";
+import { extractRelationsFactory } from "@app/graphql/helpers/relationsExtractor";
+import { PokemonRelations } from "@app/database/models/PokemonModel";
+
+const extractPokemonRelations = extractRelationsFactory(PokemonRelations);
 
 export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
   t.field("getPokemon", {
@@ -19,7 +22,7 @@ export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
       id: intArg(),
     },
     resolve: (query, { id }, _, { fieldNodes }) =>
-      pokemonService.getPokemon(id!, extraPokemonRelations(fieldNodes)),
+      pokemonService.getPokemon(id!, extractPokemonRelations(fieldNodes)),
   });
 
   t.field("getPokemonBySlug", {
@@ -28,7 +31,10 @@ export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
       slug: stringArg(),
     },
     resolve: (query, { slug }, _, { fieldNodes }) =>
-      pokemonService.getPokemonBySlug(slug!, extraPokemonRelations(fieldNodes)),
+      pokemonService.getPokemonBySlug(
+        slug!,
+        extractPokemonRelations(fieldNodes)
+      ),
   });
 
   t.field("listPokemon", {
@@ -69,7 +75,7 @@ export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
           ...filters,
           favoriteByUserId,
         } as ListPokemonOptions["filters"],
-        relations: extraPokemonRelations(fieldNodes),
+        relations: extractPokemonRelations(fieldNodes, "edges."),
       });
     },
   });
