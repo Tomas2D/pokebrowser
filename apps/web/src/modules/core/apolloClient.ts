@@ -4,6 +4,7 @@ import { onError } from "@apollo/client/link/error";
 import merge from "deepmerge";
 import { equals } from "rambda";
 import { GRAPHQL_ENDPOINT_URL } from "@module/core/config/api";
+import { relayStylePagination } from "@apollo/client/utilities";
 
 export const APOLLO_STATE_PROP_NAME = "__APOLLO_STATE__";
 
@@ -31,22 +32,9 @@ function createApolloClient() {
     credentials: "include",
     cache: new InMemoryCache({
       typePolicies: {
-        metaSchema: {
-          keyFields: [],
-        },
-        listPokemonSchema: {
-          keyFields: [],
+        Query: {
           fields: {
-            meta: {
-              merge(_, incoming) {
-                return incoming;
-              },
-            },
-            edges: {
-              merge(existing = [], incoming: unknown[]) {
-                return incoming;
-              },
-            },
+            listPokemon: relayStylePagination(),
           },
         },
       },

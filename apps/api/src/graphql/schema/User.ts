@@ -6,7 +6,7 @@ import { PokemonVoteModel } from "@app/database/models/PokemonVoteModel";
 export const UserSchema = objectType({
   name: "User",
   definition(t) {
-    t.string("id");
+    t.id("id");
     t.list.int("voteIds", {
       resolve: typedResolver(async (parent: UserModel) => {
         const response = await parent.$relatedQuery<PokemonVoteModel>(

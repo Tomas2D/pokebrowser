@@ -14,21 +14,29 @@ export enum BrowsingView {
 }
 
 export type PokemonFilters = NexusGenInputs["ListPokemonFilters"];
+export type PokemonPagination = {
+  size: number;
+};
 
 interface IPokemonContext {
   browsingView: BrowsingView;
   setBrowsingView: (view: BrowsingView) => void;
   setFilters: Dispatch<SetStateAction<PokemonFilters>>;
+  setPagination: Dispatch<SetStateAction<PokemonPagination>>;
   filters: PokemonFilters;
+  pagination: PokemonPagination;
 }
 
 export const defaultPokemonContext: IPokemonContext = {
   browsingView: BrowsingView.GRID,
   setBrowsingView: nop,
   setFilters: nop,
+  setPagination: nop,
   filters: {
-    size: 10,
     favorite: false,
+  },
+  pagination: {
+    size: 10,
   },
 } as const;
 
@@ -51,6 +59,10 @@ export const PokemonContextProvider = ({
     defaultPokemonContext.filters
   );
 
+  const [pagination, setPagination] = useState<PokemonPagination>(
+    defaultPokemonContext.pagination
+  );
+
   return (
     <PokemonContext.Provider
       value={{
@@ -59,6 +71,8 @@ export const PokemonContextProvider = ({
         setBrowsingView,
         filters,
         setFilters,
+        pagination,
+        setPagination,
       }}
     >
       {children}

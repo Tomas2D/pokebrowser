@@ -1,10 +1,4 @@
-import {
-  inputObjectType,
-  intArg,
-  nullable,
-  objectType,
-  stringArg,
-} from "nexus";
+import { idArg, inputObjectType, intArg, nullable, stringArg } from "nexus";
 
 import { PokemonSchema, PokemonTypeSchema } from "@app/graphql/schema/Pokemon";
 import * as pokemonService from "@app/services/PokemonService";
@@ -22,7 +16,7 @@ export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
       id: intArg(),
     },
     resolve: (query, { id }, _, { fieldNodes }) =>
-      pokemonService.getPokemon(id!, extractPokemonRelations(fieldNodes)),
+      pokemonService.getPokemon(id, extractPokemonRelations(fieldNodes)),
   });
 
   t.field("getPokemonBySlug", {
@@ -37,45 +31,35 @@ export const pokemonQueryResolver = (t: ObjectDefinitionBlock<"Query">) => {
       ),
   });
 
-  t.field("listPokemon", {
-    type: objectType({
-      name: "ListPokemon",
-      definition(t) {
-        t.list.field("edges", {
-          type: PokemonSchema,
-        });
-        t.field("meta", {
-          type: objectType({
-            name: "ListPokemonMeta",
-            definition(t) {
-              t.int("total");
-              t.boolean("hasMore");
-            },
-          }),
-        });
-      },
-    }),
-    args: {
+  t.connectionField("listPokemon", {
+    type: PokemonSchema,
+    strictArgs: true,
+    cursorFromNode: (node) => String(node.id),
+    additionalArgs: {
       filters: inputObjectType({
         name: "ListPokemonFilters",
         definition(t) {
           t.nullable.list.int("typeId");
           t.nullable.string("name");
-          t.nullable.int("offset");
-          t.nullable.int("size");
           t.nullable.boolean("favorite");
         },
       }),
     },
-    resolve: async (parent, { filters }, { ctx }, { fieldNodes }) => {
+    resolve: async (
+      parent,
+      { filters, ...cursor },
+      { ctx },
+      { fieldNodes }
+    ) => {
       const favoriteByUserId = filters?.favorite ? ctx.user?.id : null;
 
       return pokemonService.listPokemon({
+        relations: extractPokemonRelations(fieldNodes, "edges.node."),
+        cursor,
         filters: {
           ...filters,
           favoriteByUserId,
         } as ListPokemonOptions["filters"],
-        relations: extractPokemonRelations(fieldNodes, "edges."),
       });
     },
   });
@@ -94,11 +78,14 @@ export const pokemonMutationResolver = (
     args: {
       id: intArg(),
     },
-    resolve: (parent, { id }, { ctx }) =>
-      pokemonService.voteForPokemon({
-        pokemonId: id!,
-        userId: ctx.user!.id,
-      }),
+    resolve: (parent, { id }, { ctx }, { fieldNodes }) =>
+      pokemonService.voteForPokemon(
+        {
+          pokemonId: id,
+          userId: ctx.user!.id,
+        },
+        extractPokemonRelations(fieldNodes)
+      ),
   });
 
   t.field("unVotePokemon", {
@@ -106,10 +93,13 @@ export const pokemonMutationResolver = (
     args: {
       id: intArg(),
     },
-    resolve: (parent, { id }, { ctx }) =>
-      pokemonService.unVoteForPokemon({
-        pokemonId: id!,
-        userId: ctx.user!.id,
-      }),
+    resolve: (parent, { id }, { ctx }, { fieldNodes }) =>
+      pokemonService.unVoteForPokemon(
+        {
+          pokemonId: id,
+          userId: ctx.user!.id,
+        },
+        extractPokemonRelations(fieldNodes)
+      ),
   });
 };

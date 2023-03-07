@@ -58,7 +58,7 @@ export function Content() {
       )}
     >
       <StyledInfiniteList
-        hasMore={meta?.hasMore}
+        hasMore={meta.hasNextPage}
         inProgress={loading}
         loadMore={fetchMore}
         useWindow

@@ -24,6 +24,8 @@ export async function getStaticProps() {
     query: FETCH_POKEMONS_QUERY,
     variables: {
       filters: defaultPokemonContext.filters,
+      first: defaultPokemonContext.pagination.size,
+      after: "",
     },
   });
 

@@ -2,12 +2,35 @@ import { parse } from "graphql";
 import { assertSingleValue } from "@app/test/utils/graphql";
 import { destroyTestApp, initTestApp, TestApp } from "@app/test/utils/app";
 import { Pokemon } from "@app/graphql";
+import { PokemonVoteModel } from "@app/database/models/PokemonVoteModel";
 
 describe("User", async () => {
   let app: TestApp;
+  const userId = "1";
 
   beforeAll(async () => {
     app = await initTestApp();
+  });
+
+  beforeEach(async () => {
+    const trx = await PokemonVoteModel.startTransaction();
+    try {
+      await PokemonVoteModel.query().transacting(trx).truncate();
+      await Promise.all(
+        [3, 4, 5].map((pokemonId) =>
+          PokemonVoteModel.query()
+            .insert({
+              userId,
+              pokemonId,
+            })
+            .transacting(trx)
+        )
+      );
+      await trx.commit();
+    } catch (e) {
+      await trx.rollback();
+      throw e;
+    }
   });
 
   afterAll(async () => {
@@ -17,10 +40,10 @@ describe("User", async () => {
   it("retrieves user", async () => {
     const result = await app.executor({
       variables: {
-        id: "1",
+        id: userId,
       },
       document: parse(/* GraphQL */ `
-        query getUser($id: String!) {
+        query getUser($id: ID!) {
           getUser(id: $id) {
             id
             voteIds

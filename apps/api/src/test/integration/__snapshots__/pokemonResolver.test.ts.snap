@@ -108,7 +108,6 @@ exports[`Pokemon > retrieves pokemon by id/slug 1`] = `
       "name": "Fire",
     },
   ],
-  "votesCount": 3,
   "weaknesses": [
     {
       "id": 3,

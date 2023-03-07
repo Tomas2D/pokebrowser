@@ -27,14 +27,16 @@ export async function getStaticPaths() {
   const apolloClient = initializeApollo();
 
   const { data } = await apolloClient.query<{
-    listPokemon: { edges: Pick<Pokemon, "slug">[] };
+    listPokemon: { edges: Array<{ node: Pick<Pokemon, "slug"> }> };
   }>({
     query: gql`
       query ssrListPokemonSlugs {
-        listPokemon(filters: { offset: 0, size: 1000 }) {
+        listPokemon(filters: {}, first: 1000, after: "") {
           edges {
-            id
-            slug
+            node {
+              id
+              slug
+            }
           }
         }
       }
@@ -43,9 +45,9 @@ export async function getStaticPaths() {
   });
 
   return {
-    paths: data.listPokemon.edges.map((edge) => ({
+    paths: data.listPokemon.edges.map(({ node }) => ({
       params: {
-        slug: edge.slug,
+        slug: node.slug,
       },
     })),
     fallback: false,

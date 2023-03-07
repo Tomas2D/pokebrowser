@@ -1,10 +1,11 @@
 import { QueryResolver } from "@app/graphql/resolver/QueryResolver";
 import { MutationResolver } from "@app/graphql/resolver/MutationResolver";
-import { makeSchema as graphqlMakeSchema } from "nexus";
+import { connectionPlugin, makeSchema as graphqlMakeSchema } from "nexus";
 import * as schemaTypes from "./schema/types";
 
 export function makeSchema() {
   return graphqlMakeSchema({
+    plugins: [connectionPlugin()],
     types: [Object.values(schemaTypes), QueryResolver, MutationResolver],
     nonNullDefaults: {
       input: true,

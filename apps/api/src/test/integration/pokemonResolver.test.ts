@@ -18,28 +18,25 @@ describe("Pokemon", async () => {
   it("returns list of pokemons", async () => {
     const result = await app.executor({
       variables: {
-        filters: {
-          size: 2,
-          offset: 0,
-        } as PokemonFilters,
+        first: 2,
+        filters: {} as PokemonFilters,
       },
       document: parse(/* GraphQL */ `
-        query listPokemon($filters: ListPokemonFilters!) {
-          listPokemon(filters: $filters) {
-            meta {
-              total
-              hasMore
-            }
+        query listPokemon($first: Int!, $filters: ListPokemonFilters!) {
+          listPokemon(first: $first, filters: $filters) {
             edges {
-              id
-              name
-              slug
-              types {
+              node {
                 id
                 name
+                slug
+                types {
+                  id
+                  name
+                }
+                maxHp
+                maxCp
               }
-              maxHp
-              maxCp
+              cursor
             }
           }
         }
@@ -53,81 +50,90 @@ describe("Pokemon", async () => {
     expect(result.data.listPokemon.edges).toMatchInlineSnapshot(`
       [
         {
-          "id": 1,
-          "maxCp": 951,
-          "maxHp": 1071,
-          "name": "Bulbasaur",
-          "slug": "bulbasaur",
-          "types": [
-            {
-              "id": 1,
-              "name": "Grass",
-            },
-            {
-              "id": 2,
-              "name": "Poison",
-            },
-          ],
+          "cursor": "KGpzb24pMQ",
+          "node": {
+            "id": 1,
+            "maxCp": 951,
+            "maxHp": 1071,
+            "name": "Bulbasaur",
+            "slug": "bulbasaur",
+            "types": [
+              {
+                "id": 1,
+                "name": "Grass",
+              },
+              {
+                "id": 2,
+                "name": "Poison",
+              },
+            ],
+          },
         },
         {
-          "id": 2,
-          "maxCp": 1483,
-          "maxHp": 1632,
-          "name": "Ivysaur",
-          "slug": "ivysaur",
-          "types": [
-            {
-              "id": 1,
-              "name": "Grass",
-            },
-            {
-              "id": 2,
-              "name": "Poison",
-            },
-          ],
+          "cursor": "KGpzb24pMg",
+          "node": {
+            "id": 2,
+            "maxCp": 1483,
+            "maxHp": 1632,
+            "name": "Ivysaur",
+            "slug": "ivysaur",
+            "types": [
+              {
+                "id": 1,
+                "name": "Grass",
+              },
+              {
+                "id": 2,
+                "name": "Poison",
+              },
+            ],
+          },
         },
       ]
     `);
-    expect(result.data.listPokemon.meta).toMatchInlineSnapshot(`
-      {
-        "hasMore": true,
-        "total": 30,
-      }
-    `);
+    expect(result.data.listPokemon.meta).toMatchInlineSnapshot("undefined");
   });
 
   it("paginates correctly", async () => {
-    const runQuery = async (offset: number) => {
+    const runQuery = async (afterCursor: string) => {
       const result = await app.executor({
         variables: {
-          filters: {
-            size: 5,
-            offset,
-          } as PokemonFilters,
+          first: 5,
+          after: afterCursor,
+          filters: {} as PokemonFilters,
         },
         document: parse(/* GraphQL */ `
-          query listPokemon($filters: ListPokemonFilters!) {
-            listPokemon(filters: $filters) {
-              meta {
-                total
-                hasMore
+          query listPokemon(
+            $first: Int!
+            $after: String!
+            $filters: ListPokemonFilters!
+          ) {
+            listPokemon(first: $first, after: $after, filters: $filters) {
+              pageInfo {
+                startCursor
+                endCursor
+                hasNextPage
+                hasPreviousPage
               }
               edges {
-                id
-                types {
+                cursor
+                node {
                   id
-                  name
-                }
-                attacks {
-                  id
-                  name
-                  damage
-                }
-                nextEvolution {
-                  id
-                }
-                previousEvolution {
-                  id
+                  types {
+                    id
+                    name
+                  }
+                  attacks {
+                    id
+                    name
+                    damage
+                  }
+                  nextEvolution {
+                    id
+                  }
+                  previousEvolution {
+                    id
+                  }
                 }
               }
             }
@@ -141,31 +147,29 @@ describe("Pokemon", async () => {
     };
 
     let ids = new Set();
-    let totalCount = Infinity;
-    let offset = 0;
+    let cursor: string = "";
+    let counter = 0;
 
-    while (ids.size < totalCount) {
-      const { errors, data } = await runQuery(offset);
+    do {
+      const { errors, data } = await runQuery(cursor!);
       expect(errors).toBeUndefined();
       expect(data).toBeDefined();
 
-      if (totalCount === Infinity) {
-        totalCount = data.listPokemon.meta.total;
-      }
-      expect(totalCount).toBe(data.listPokemon.meta.total);
-
-      for (const { id } of data.listPokemon.edges) {
+      for (const {
+        node: { id },
+      } of data.listPokemon.edges) {
         expect(ids.has(id)).toBe(false);
         ids.add(id);
-        offset++;
+        counter++;
       }
 
-      if (ids.size < totalCount) {
-        expect(data.listPokemon.meta.hasMore).toBe(true);
-      } else {
-        expect(data.listPokemon.meta.hasMore).toBe(false);
+      if (!data.listPokemon.pageInfo.hasNextPage) {
+        break;
       }
-    }
+      cursor = data.listPokemon.pageInfo.endCursor;
+    } while (cursor);
+
+    expect(ids.size).toBe(counter);
   });
 
   it("filters pokemons by type", async () => {
@@ -174,19 +178,21 @@ describe("Pokemon", async () => {
 
     const result = await app.executor({
       variables: {
+        first: size,
         filters: {
-          size,
           typeId: [type.id],
         } as PokemonFilters,
       },
       document: parse(/* GraphQL */ `
-        query listPokemon($filters: ListPokemonFilters!) {
-          listPokemon(filters: $filters) {
+        query listPokemon($first: Int!, $filters: ListPokemonFilters!) {
+          listPokemon(first: $first, filters: $filters) {
             edges {
-              id
-              types {
+              node {
                 id
-                name
+                types {
+                  id
+                  name
+                }
               }
             }
           }
@@ -203,8 +209,8 @@ describe("Pokemon", async () => {
 
     expect(data.listPokemon.edges).toHaveLength(size);
     expect(
-      data.listPokemon.edges.every((edge: any) =>
-        edge.types.some(({ id }: typeof edge) => id === type.id)
+      data.listPokemon.edges.every(({ node }: { node: PokemonModel }) =>
+        node.types.some(({ id }) => id === type.id)
       )
     ).toBe(true);
   });
@@ -212,16 +218,19 @@ describe("Pokemon", async () => {
   it("filters pokemons by name", async () => {
     const result = await app.executor({
       variables: {
+        first: 100,
         filters: {
           name: "charm",
         } as PokemonFilters,
       },
       document: parse(/* GraphQL */ `
-        query listPokemon($filters: ListPokemonFilters!) {
-          listPokemon(filters: $filters) {
+        query listPokemon($first: Int!, $filters: ListPokemonFilters!) {
+          listPokemon(first: $first, filters: $filters) {
             edges {
-              id
-              name
+              node {
+                id
+                name
+              }
             }
           }
         }
@@ -236,8 +245,8 @@ describe("Pokemon", async () => {
     expect(data).toBeDefined();
 
     expect(
-      data.listPokemon.edges.every((edge: PokemonModel) =>
-        edge.name.startsWith("Charm")
+      data.listPokemon.edges.every(({ node }: { node: PokemonModel }) =>
+        node.name.startsWith("Charm")
       )
     ).toBe(true);
   });
@@ -245,16 +254,19 @@ describe("Pokemon", async () => {
   it("retrieves user's favorite pokemons", async () => {
     const result = await app.executor({
       variables: {
+        first: 10,
         filters: {
           favorite: true,
         } as PokemonFilters,
       },
       document: parse(/* GraphQL */ `
-        query listPokemon($filters: ListPokemonFilters!) {
-          listPokemon(filters: $filters) {
+        query listPokemon($first: Int!, $filters: ListPokemonFilters!) {
+          listPokemon(first: $first, filters: $filters) {
             edges {
-              id
-              name
+              node {
+                id
+                name
+              }
             }
           }
         }
@@ -268,8 +280,11 @@ describe("Pokemon", async () => {
     expect(errors).toBeUndefined();
     expect(data).toBeDefined();
 
-    expect(data.listPokemon.edges.map((edge: PokemonModel) => edge.name))
-      .toMatchInlineSnapshot(`
+    expect(
+      data.listPokemon.edges.map(
+        (edge: { node: PokemonModel }) => edge.node.name
+      )
+    ).toMatchInlineSnapshot(`
       [
         "Venusaur",
         "Charmander",
@@ -339,7 +354,6 @@ describe("Pokemon", async () => {
               id
               name
             }
-            votesCount
             weaknesses {
               id
               name

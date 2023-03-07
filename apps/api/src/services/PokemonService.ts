@@ -5,20 +5,22 @@ import {
 import { isEmpty } from "rambda";
 import { PokemonVoteModel } from "@app/database/models/PokemonVoteModel";
 import { PokemonTypeModel } from "@app/database/models/PokemonTypeModel";
-import { pickFirstKey } from "@app/graphql/utilities";
 import { getRelationPrimaryKey } from "@app/helpers";
-import * as console from "console";
+import type { Connection, ConnectionArguments } from "graphql-relay";
 
-export async function getPokemon(id: number, relations: string[] = []) {
+export async function getPokemon(
+  id: number | string,
+  relations: string[] = []
+) {
   const query = PokemonModel.query();
 
   for (const relation of relations) {
     query.withGraphFetched(relation).modifyGraph(relation, (builder) => {
       const modelClass = query.modelClass();
-      if (relation === PokemonRelations.ATTACKS) {
+      const relationName = relation.split(".").pop()!;
+      if (relationName === PokemonRelations.ATTACKS) {
         builder.withGraphFetched("type");
       }
-      const relationName = relation.split(".").pop()!;
       builder.orderBy(getRelationPrimaryKey(modelClass, relationName));
     });
   }
@@ -35,7 +37,6 @@ export async function getPokemonBySlug(slug: string, relations: string[] = []) {
     })
     .first();
 
-  console.info(relations);
   return pokemon ? getPokemon(pokemon.id, relations) : null;
 }
 
@@ -43,17 +44,17 @@ export interface ListPokemonOptions {
   filters: {
     typeId?: number[];
     name?: string;
-    offset?: number;
-    size?: number;
     favoriteByUserId?: number;
   };
+  cursor: ConnectionArguments;
   relations: string[];
 }
 
 export async function listPokemon({
   relations,
-  filters: { typeId = [], offset = 0, size = 20, name = "", favoriteByUserId },
-}: ListPokemonOptions) {
+  cursor,
+  filters: { typeId = [], name = "", favoriteByUserId },
+}: ListPokemonOptions): Promise<Connection<PokemonModel>> {
   const query = PokemonModel.query().leftJoinRelated(PokemonRelations.TYPES);
 
   if (name?.trim()) {
@@ -73,36 +74,38 @@ export async function listPokemon({
     );
   }
 
-  const [total, results] = await Promise.all([
-    query
-      .clone()
-      .clearSelect()
-      .countDistinct(PokemonModel.ref("id"))
-      .first()
-      .then(pickFirstKey<number>),
-    query
-      .limit(size)
-      .offset(offset)
-      .orderBy(PokemonModel.ref("id"))
-      .groupBy(PokemonModel.ref("id")),
-  ]);
+  query.limit(cursor.first! ?? cursor.last!);
 
-  const resultsWithRelations: PokemonModel[] = await Promise.all(
-    results.map(async (result: PokemonModel) => {
+  const { pageInfo, nodes = [] } = await (cursor.before !== undefined
+    ? query.previousCursorPage(cursor.before)
+    : query.cursorPage(cursor.after)
+  )
+    .orderBy(PokemonModel.ref("id"), "ASC")
+    .groupBy(PokemonModel.ref("id"));
+
+  await Promise.all(
+    nodes.map(async (result: { data: PokemonModel }) => {
       for (const relation of relations) {
-        await result.$fetchGraph(relation, {
+        await result.data.$fetchGraph(relation, {
           skipFetched: true,
         });
+        if (relation.split(".").pop()! === PokemonRelations.ATTACKS) {
+          await result.data.$fetchGraph(`${relation}.type`, {
+            skipFetched: true,
+          });
+        }
       }
       return result;
     })
   );
 
   return {
-    edges: resultsWithRelations,
-    meta: {
-      total,
-      hasMore: Math.max(0, total - (resultsWithRelations.length + offset)) > 0,
+    edges: nodes.map(({ cursor, data: node }) => ({ cursor, node })),
+    pageInfo: {
+      hasNextPage: Boolean(pageInfo?.hasNext),
+      hasPreviousPage: Boolean(pageInfo?.hasPrevious),
+      startCursor: pageInfo?.previous,
+      endCursor: pageInfo?.next,
     },
   };
 }
@@ -131,18 +134,24 @@ export async function hasVotedForPokemon({
   return result.length > 0;
 }
 
-export async function voteForPokemon(options: VotePokemonOptions) {
+export async function voteForPokemon(
+  options: VotePokemonOptions,
+  relations: string[]
+) {
   if (!(await hasVotedForPokemon(options))) {
     await PokemonVoteModel.query().insert(options).limit(1);
   }
 
-  return getPokemon(options.pokemonId);
+  return getPokemon(options.pokemonId, relations);
 }
 
-export async function unVoteForPokemon(options: VotePokemonOptions) {
+export async function unVoteForPokemon(
+  options: VotePokemonOptions,
+  relations: string[]
+) {
   if (await hasVotedForPokemon(options)) {
     await PokemonVoteModel.query().delete().where(options).limit(1);
   }
 
-  return getPokemon(options.pokemonId);
+  return getPokemon(options.pokemonId, relations);
 }

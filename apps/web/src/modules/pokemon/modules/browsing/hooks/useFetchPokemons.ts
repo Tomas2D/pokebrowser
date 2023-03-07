@@ -1,70 +1,86 @@
 import { gql, useQuery } from "@apollo/client";
-import { Pokemon, PokemonMeta } from "@pokemons/api/graphql";
+import { Pokemon, PageInfo } from "@pokemons/api/graphql";
 import { useContext } from "react";
 import { PokemonContext } from "@module/pokemon/PokemonContext";
 
 export const FETCH_POKEMONS_QUERY = gql`
-  query listPokemon($filters: ListPokemonFilters!) {
-    listPokemon(filters: $filters) {
-      meta {
-        total
-        hasMore
+  query listPokemon(
+    $first: Int!
+    $after: String!
+    $filters: ListPokemonFilters!
+  ) {
+    listPokemon(first: $first, after: $after, filters: $filters) {
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
       }
       edges {
-        id
-        name
-        slug
-        types {
+        cursor
+        node {
           id
           name
+          slug
+          types {
+            id
+            name
+          }
+          weaknesses {
+            id
+            name
+          }
+          weight {
+            minimum
+            maximum
+          }
+          height {
+            minimum
+            maximum
+          }
+          maxHp
+          maxCp
+          fleeRate
         }
-        weaknesses {
-          id
-          name
-        }
-        weight {
-          minimum
-          maximum
-        }
-        height {
-          minimum
-          maximum
-        }
-        maxHp
-        maxCp
-        fleeRate
       }
     }
   }
 `;
 
 export function useFetchPokemons() {
-  const { filters } = useContext(PokemonContext);
+  const { filters, pagination } = useContext(PokemonContext);
   const query = useQuery<{
-    listPokemon: { edges: Pokemon[]; meta: PokemonMeta };
+    listPokemon: { edges: Array<{ node: Pokemon }>; pageInfo: PageInfo };
   }>(FETCH_POKEMONS_QUERY, {
-    variables: { filters },
+    variables: {
+      first: pagination.size,
+      after: "",
+      filters,
+    },
     notifyOnNetworkStatusChange: true,
     fetchPolicy: "cache-and-network",
   });
 
   const data = query?.data?.listPokemon.edges || [];
-  const meta = query?.data?.listPokemon.meta;
+  const pageInfo = query?.data?.listPokemon.pageInfo!;
 
   const isEmpty = !query.loading && data.length === 0;
   const isLoading = isEmpty && query.loading;
   const isLoadingMore = data.length > 0 && query.loading;
 
   const handleFetchMore = () => {
+    if (!pageInfo.hasNextPage) {
+      return;
+    }
+
     return query.fetchMore({
       variables: {
-        filters: {
-          ...filters,
-          offset: data.length,
-        },
+        filters,
+        first: pagination.size,
+        after: pageInfo.endCursor,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !prev.listPokemon?.meta?.hasMore) {
+        if (!fetchMoreResult || !prev.listPokemon?.pageInfo?.hasNextPage) {
           return prev;
         }
 
@@ -73,18 +89,18 @@ export function useFetchPokemons() {
         return {
           ...prev,
           listPokemon: {
-            meta: {
-              ...prev.listPokemon.meta,
-              ...fetchMoreResult.listPokemon.meta,
+            pageInfo: {
+              ...prev.listPokemon.pageInfo,
+              ...fetchMoreResult.listPokemon.pageInfo,
             },
             edges: [
               ...prev.listPokemon.edges,
               ...fetchMoreResult.listPokemon.edges,
-            ].filter((pokemon) => {
-              if (existingIds.has(pokemon.id)) {
+            ].filter(({ node }) => {
+              if (existingIds.has(node.id)) {
                 return false;
               }
-              existingIds.add(pokemon.id);
+              existingIds.add(node.id);
               return true;
             }),
           },
@@ -97,10 +113,10 @@ export function useFetchPokemons() {
     ...query,
     loading: isLoading,
     isLoadingMore,
-    meta,
+    meta: pageInfo,
     fetchMore: handleFetchMore,
-    data,
+    data: data.map((d) => d.node),
     isEmpty,
-    pageSize: filters.size!,
+    pageSize: pagination.size,
   };
 }

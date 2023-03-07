@@ -16,10 +16,16 @@ export const PokemonRelations = {
   TYPES: "types",
 };
 
-export type PokemonRelationsType =
-  (typeof PokemonRelations)[keyof typeof PokemonRelations];
+import cursor from "objection-cursor";
+const cursorMixin = cursor({
+  nodes: true,
+  pageInfo: {
+    hasNext: true,
+    hasPrevious: true,
+  },
+});
 
-export class PokemonModel extends Model {
+export class PokemonModel extends cursorMixin(Model) {
   id!: number;
   name!: string;
   slug!: string;
